@@ -36,7 +36,31 @@ def validate_id(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_id")
+    reason = ""
+    isgood = True
+    
+    if type(value) != str:
+
+        isgood = False
+        reason = "Is not a string"
+        return (isgood,reason)
+    if len(value) != 5:
+        isgood = False
+        reason = "Not 5 characters"
+        return (isgood,reason)
+    if value[0] != 'M' or value[1] != 'S':
+        isgood = False
+        reason = "ID does not start with MS"
+        return (isgood,reason)
+    if value[2].isdigit() != 1 or value[2].isdigit() != 1 or value[4].isdigit() != 1:
+        isgood = False
+        reason = "Must have 3 digits as last three elements of ID"
+        return (isgood,reason)
+    return (isgood,reason)
+    
+
+        
+    
 
 
 def validate_title(value):
