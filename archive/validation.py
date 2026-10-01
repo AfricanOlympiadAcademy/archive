@@ -177,4 +177,20 @@ def validate_record(record):
 
     Do not re-write the rules here. Call the five functions above.
     """
-    raise NotImplementedError("validate_record")
+    reasons = []
+    isgood, reason = validate_id(record.get("id", ""))
+    if not isgood:
+        reasons.append(reason)
+    isgood, reason = validate_title(record.get("title", ""))
+    if not isgood:
+        reasons.append(reason)
+    isgood, reason = validate_city(record.get("city", ""))
+    if not isgood:
+        reasons.append(reason)
+    isgood, reason = validate_year(record.get("year", ""))
+    if not isgood:
+        reasons.append(reason)
+    isgood, reason = validate_condition(record.get("condition", ""))
+    if not isgood:
+        reasons.append(reason)
+    return reasons
