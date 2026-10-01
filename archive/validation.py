@@ -71,7 +71,18 @@ def validate_title(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_title")
+    reason = ""
+    isgood = True
+    if type(value) != str:
+        isgood = False
+        reason = "Is not a string"
+        return (isgood,reason)
+    if len(value.strip()) < 3:
+        isgood = False
+        reason = "Title must be at least 3 characters long"
+        return (isgood,reason)
+    return (isgood,reason)
+    
 
 
 def validate_city(value):
@@ -83,7 +94,21 @@ def validate_city(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_city")
+    reason = ""
+    isgood = True
+    if type(value) != str:
+        isgood = False
+        reason = "Is not a string"
+        return (isgood,reason)
+    if value.strip() == "":
+        isgood = False
+        reason = "City is required"
+        return (isgood,reason)
+    if value.strip().lower() not in [city.lower() for city in KNOWN_CITIES]:
+        isgood = False
+        reason = "City is not in our list"
+        return (isgood,reason)
+    return (isgood,reason)
 
 
 def validate_year(value):
@@ -98,7 +123,26 @@ def validate_year(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_year")
+    reason = ""
+    isgood = True
+    if type(value) != str:
+        isgood = False
+        reason = "Is not a string"
+        return (isgood,reason)
+    if value.strip() == "":
+        isgood = False
+        reason = "Year is required"
+        return (isgood,reason)
+    if not value.strip().isdigit():
+        isgood = False
+        reason = "Year must be a number"
+        return (isgood,reason)
+    year = int(value.strip())
+    if year < MIN_YEAR or year > MAX_YEAR:
+        isgood = False
+        reason = f"Year must be between {MIN_YEAR} and {MAX_YEAR}"
+        return (isgood,reason)
+    return (isgood,reason)
 
 
 def validate_condition(value):
@@ -109,7 +153,17 @@ def validate_condition(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_condition")
+    reason = ""
+    isgood = True
+    if type(value) != str:
+        isgood = False
+        reason = "Is not a string"
+        return (isgood,reason)
+    if value.strip().lower() not in [condition.lower() for condition in VALID_CONDITIONS]:
+        isgood = False
+        reason = "Condition is not valid"
+        return (isgood,reason)
+    return (isgood,reason)
 
 
 def validate_record(record):
