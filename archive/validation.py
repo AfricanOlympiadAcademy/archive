@@ -18,7 +18,7 @@ The year range is INCLUSIVE at both ends: 1100 and 1900 are VALID.
 1099 and 1901 are not. Most marks lost in Part A are lost on that line.
 """
 
-from archive.errors import MalformedRecordError  # noqa: F401  (you may not need it here)
+from archive.errors import MalformedRecordErro
 
 KNOWN_CITIES = ["Timbuktu", "Djenne", "Gao", "Walata", "Chinguetti"]
 
@@ -36,8 +36,14 @@ def validate_id(value):
 
     Returns (bool, str).
     """
-    h
-    raise NotImplementedError("validate_id")
+    if value is None:
+        return False, "ID is missing"
+
+    text = str(value).strip()
+    if len(text) != 5 or not text.startswith("MS") or not text[2:].isdigit():
+        return False, "ID must be in the form MS###"
+
+    return True, ""
 
 
 def validate_title(value):
@@ -48,7 +54,14 @@ def validate_title(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_title")
+    if value is None:
+        return False, "Title is missing"
+
+    text = str(value).strip()
+    if len(text) < 3:
+        return False, "Title must be at least 3 characters"
+
+    return True, ""
 
 
 def validate_city(value):
@@ -60,7 +73,19 @@ def validate_city(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_city")
+    if value is None:
+        return False, "City is missing"
+
+    text = str(value).strip()
+    if not text:
+        return False, "City is missing"
+
+    normalized = text.lower()
+    for city in KNOWN_CITIES:
+        if city.lower() == normalized:
+            return True, ""
+
+    return False, "City is not one of the known archive cities"
 
 
 def validate_year(value):
@@ -71,11 +96,27 @@ def validate_year(value):
     Invalid: "", "   ", "c.1590", "sixteen fifty", "1099", "1901", "2087"
 
     Note that "2087" parses perfectly well as a number. It is still wrong.
+
     That is the whole point of a range check.
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_year")
+    if value is None:
+        return False, "Year is missing"
+
+    text = str(value).strip()
+    if not text:
+        return False, "Year is missing"
+
+    try:
+        year = int(text)
+    except (TypeError, ValueError):
+        return False, "Year must be a whole number"
+
+    if year < MIN_YEAR or year > MAX_YEAR:
+        return False, "Year must be between 1100 and 1900"
+
+    return True, ""
 
 
 def validate_condition(value):
@@ -86,7 +127,17 @@ def validate_condition(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_condition")
+    if value is None:
+        return False, "Condition is missing"
+
+    text = str(value).strip().lower()
+    if not text:
+        return False, "Condition is missing"
+
+    if text not in VALID_CONDITIONS:
+        return False, "Condition must be fragile, fair, or good"
+
+    return True, ""
 
 
 def validate_record(record):
@@ -95,9 +146,24 @@ def validate_record(record):
     record is a dict with the keys: id, title, city, year, condition.
 
     Returns a LIST of reasons the record is invalid — one string per broken
-    rule, in this field order: id, title, city, year, condition.
+    rule, in this field order: id, title, city, year, condition
     An empty list means the record is valid.
 
     Do not re-write the rules here. Call the five functions above.
     """
-    raise NotImplementedError("validate_record")
+    if not isinstance(record, dict):
+        return ["Record must be a dictionary"]
+
+    reasons = []
+    for field_name, validator in [
+        ("id", validate_id),
+        ("title", validate_title),
+        ("city", validate_city),
+        ("year", validate_year),
+        ("condition", validate_condition),
+    ]:
+        valid, reason = validator(record.get(field_name, ""))
+        if not valid:
+            reasons.append(reason)
+
+    return reasons
