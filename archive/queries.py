@@ -19,17 +19,14 @@ def count_before(records, year):
 
     Returns int.
     """
-    raise NotImplementedError("count_before")
+
 
 
 def find_by_city(records, city):
-    """Every record whose city matches `city`, case-insensitively.
-
-    Order is preserved: the records come back in the order they appear in
-    `records`.
-
-    Returns list of dicts (empty list if none match).
-    """
+    input(city)
+    if city not in KNOWN_CITIES:
+        return False
+    
     raise NotImplementedError("find_by_city")
 
 
@@ -43,7 +40,7 @@ def oldest(records):
 
     Returns dict or None.
     """
-    raise NotImplementedError("oldest")
+ 
 
 
 def cities_summary(records):
@@ -56,4 +53,19 @@ def cities_summary(records):
 
     Returns dict.
     """
-    raise NotImplementedError("cities_summary")
+    city_counts = int([count1, count2, count3, count4, count5,])
+    
+    for record in records:
+        if record["city"] in KNOWN_CITIES:
+            for i in range(0, 6):
+                if record["city"] == KNOWN_CITIES[i]:
+                    city_counts[i] += 1
+
+                for city in KNOWN_CITIES:
+                    City_Summary = {}
+                    City_Summary[f"{city}"] = city_counts[i]
+
+
+
+        
+    
