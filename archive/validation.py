@@ -36,7 +36,6 @@ def validate_id(value):
 
     Returns (bool, str).
     """
-    h
     raise NotImplementedError("validate_id")
 
 
@@ -48,7 +47,15 @@ def validate_title(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_title")
+    if value.isalpha() and len(value) >= 3:
+        for i in range(len(value) - 2):
+             if value[i] == value[i+1] == value[i+2]:
+                 return False 
+            else:
+                return True
+    else:
+        return False
+
 
 
 def validate_city(value):
@@ -60,7 +67,11 @@ def validate_city(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_city")
+    If not value or not str(value).strip():
+        return (False, "City is missing or empty")
+    if str(value).strip().lower() not in [city.lower() for city in KNOWN_CITIES]:
+        return (False, f"City '{value}' is not in the list of known cities")
+    return (True, "")
 
 
 def validate_year(value):
@@ -75,6 +86,11 @@ def validate_year(value):
 
     Returns (bool, str).
     """
+    if type(Value) == int:
+        if value >1100:
+            if value < 1900:
+                print(valid)
+
     raise NotImplementedError("validate_year")
 
 
@@ -86,7 +102,15 @@ def validate_condition(value):
 
     Returns (bool, str).
     """
-    raise NotImplementedError("validate_condition")
+    if not value or value.strip() == "":
+        return (False, "Condition must be present and non-empty.")
+   if type(value) == str:
+        if value.lower() in VALID_CONDITIONS:
+            return (True, "")
+        else:
+            return (False, f"Condition '{value}' is not valid. Must be one of {VALID_CONDITIONS}.")
+    else:
+        return (False, "Condition must be a string.")
 
 
 def validate_record(record):
@@ -100,4 +124,5 @@ def validate_record(record):
 
     Do not re-write the rules here. Call the five functions above.
     """
+    
     raise NotImplementedError("validate_record")
