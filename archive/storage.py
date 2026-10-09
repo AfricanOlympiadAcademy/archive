@@ -31,7 +31,18 @@ def parse_line(line):
 
     Returns dict.
     """
-    raise NotImplementedError("parse_line")
+  class MalformedRecordError(Exception):
+    pass
+
+    stripped_line = line.strip()
+    fields = stripped_line.split(',')
+    if len(fields) != 5:
+        raise MalformedRecordError(
+            f"Expected exactly 5 fields, but found {len(fields)}. "
+            f"Line content: '{stripped_line}'"
+        )
+    return {field_names[i]: fields[i].strip() for i in range(5)}
+
 
 
 def load_archive(path):
@@ -50,7 +61,25 @@ def load_archive(path):
 
     Returns (list, list).
     """
-    raise NotImplementedError("load_archive")
+    valid_records = []
+    rejected_lines = []
+    
+    if not os.path.exists(path):
+        return [], []
+        
+    with open(path, "r") as f:
+        for line in f:
+            if not line.strip():
+                continue
+                record = parse_line(line)
+                if validate_record(record): 
+                    valid_records.append(record)
+                else:
+                    rejected_lines.append(line)
+            except MalformedRecordError:
+                rejected_lines.append(line)
+    return valid_records, rejected_lines
+  
 
 
 def save_archive(path, records):
@@ -60,4 +89,10 @@ def save_archive(path, records):
 
     Returns None.
     """
-    raise NotImplementedError("save_archive")
+     with open(path, "w") as f:
+        for record in records:
+            row_values = [str(record[field]) for field in FIELD_NAMES]
+            f.write(",".join(row_values) + "\n")
+
+
+   
